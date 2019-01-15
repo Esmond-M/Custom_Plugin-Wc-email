@@ -1,10 +1,10 @@
-<?php
+n<?php
 /**
  * Plugin Name: WooCommerce Custom Conditional Order Email
- * Plugin URI: http://www.skyverge.com/blog/how-to-add-a-custom-woocommerce-email/
+ * Plugin URI: https://esmondmccain.com
  * Description: Plugin for adding a custom WooCommerce email that sends admins an email when an order is received with certain shipping categories
- * Author: Eman5608
- * Author URI: http://eman5608hub.com
+ * Author: Esmond
+ * Author URI: https://esmondmccain.com
  * Version: 0.1
  *
  * License: GNU General Public License v3.0
