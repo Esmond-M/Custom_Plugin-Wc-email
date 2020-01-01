@@ -43,9 +43,7 @@ class WC_Brix_Waiver_Email extends WC_Email {
 		// Call parent constructor to load any other defaults not explicity defined here
 		parent::__construct();
 
-		// this sets the recipient to the settings defined below in init_form_fields()
-	    $this->object = new WC_Order( $order_id );
-		$this->recipient  = $this->object->get_billing_email();
+	
 
 	}
 
@@ -77,6 +75,7 @@ class WC_Brix_Waiver_Email extends WC_Email {
                 // break because we only need one "true" to matter here
                 break;
             }
+            
         }
 
 // if a product in the cart is in our category, do something
@@ -84,8 +83,9 @@ class WC_Brix_Waiver_Email extends WC_Email {
             return;
         }
 
-
+	
         // replace variables in the subject/headings
+        $this->recipient                      = $this->object->get_billing_email();
         $this->placeholders[] = '{order_date}';
         $this->placeholders[] = date_i18n( wc_date_format(), strtotime( $this->object->order_date ) );
 
@@ -172,9 +172,7 @@ class WC_Brix_Waiver_Email extends WC_Email {
 				'default'     => 'html',
 				'class'       => 'email_type',
 				'options'     => array(
-					'plain'	    => __( 'Plain text', 'woocommerce' ),
 					'html' 	    => __( 'HTML', 'woocommerce' ),
-					'multipart' => __( 'Multipart', 'woocommerce' ),
 				)
 			)
 		);
