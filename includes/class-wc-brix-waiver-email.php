@@ -3,12 +3,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * A custom Organic Product Order Order WooCommerce Email class
+ * A custom Email class to send Brix waiver email
  *
  * @since 0.1
  * @extends \WC_Email
  */
-class WC_Organic_Product_Email extends WC_Email {
+class WC_Brix_Waiver_Email extends WC_Email {
 
 
 	/**
@@ -19,39 +19,35 @@ class WC_Organic_Product_Email extends WC_Email {
 	public function __construct() {
 
 		// set ID, this simply needs to be a unique name
-		$this->id = 'wc_expedited_order';
+		$this->id = 'wc_brix_waiver';
 
 		// this is the title in WooCommerce Email settings
-		$this->title = 'Organic Product Order';
-
+		$this->title = 'Waiver Customer Notification';
+		$this->customer_email = true;
 		// this is the description in WooCommerce email settings
-		$this->description = 'Organic Product Order Notification emails are sent when a customer places an order  with shipping class "organic_product_shipping"';
+		$this->description = 'Waiver Customer Notification emails are sent when a customer places an order with category "training-programs"';
 
 		// these are the default heading and subject lines that can be overridden using the settings
-		$this->heading = 'Organic Product Order';
-		$this->subject = 'Organic Product Order';
+		$this->heading = 'Waiver for Online Coaching';
+		$this->subject = 'Waiver for Online Coaching';
 
 		// these define the locations of the templates that this email should use, we'll just use the new order template since this email is similar
-		$this->template_html  = 'emails/admin-new-order.php';
-		$this->template_plain = 'emails/plain/admin-new-order.php';
+		$this->template_html  = 'emails/brix-waiver-notification.php';
+		$this->template_plain = 'emails/plain/brix-waiver-notification.php';
 
 		// Trigger on new paid orders
 		add_action( 'woocommerce_order_status_pending_to_processing_notification', array( $this, 'trigger' ) );
 		add_action( 'woocommerce_order_status_failed_to_processing_notification',  array( $this, 'trigger' ) );
+        add_action( 'woocommerce_order_status_completed_notification', array( $this, 'trigger' ) );
 
 		// Call parent constructor to load any other defaults not explicity defined here
 		parent::__construct();
 
 		// this sets the recipient to the settings defined below in init_form_fields()
-		$this->recipient = $this->get_option( 'recipient' );
+	    $this->object = new WC_Order( $order_id );
+		$this->recipient  = $this->object->get_billing_email();
 
-		// if none was entered, just use the WP admin email as a fallback
-		if ( ! $this->recipient )
-			$this->recipient = get_option( 'admin_email' );
 	}
-
-
-
 
     /**
      * Determine if the email should actually be sent and setup email merge variables
@@ -75,8 +71,8 @@ class WC_Organic_Product_Email extends WC_Email {
 
             $product = $cart_item['data'];
 
-            // replace 'shippable-product' with your category's slug
-            if ( has_term( 'shippable-product', 'product_cat', $product->get_id() ) ) {
+            // replace 'training-programs' with your category's slug
+            if ( has_term( 'training-programs', 'product_cat', $product->get_id() ) ) {
                 $cat_check = true;
                 // break because we only need one "true" to matter here
                 break;
@@ -96,7 +92,7 @@ class WC_Organic_Product_Email extends WC_Email {
         $this->placeholders[] = '{order_number}';
         $this->placeholders[] = $this->object->get_order_number();
 
-        if ( ! $this->is_enabled() || ! $this->get_recipient() )
+        if ( ! $this->is_enabled())
             return;
 
         // woohoo, send the email!
@@ -154,13 +150,6 @@ class WC_Organic_Product_Email extends WC_Email {
 				'type'    => 'checkbox',
 				'label'   => 'Enable this email notification',
 				'default' => 'yes'
-			),
-			'recipient'  => array(
-				'title'       => 'Recipient(s)',
-				'type'        => 'text',
-				'description' => sprintf( 'Enter recipients (comma separated) for this email. Defaults to <code>%s</code>.', esc_attr( get_option( 'admin_email' ) ) ),
-				'placeholder' => '',
-				'default'     => ''
 			),
 			'subject'    => array(
 				'title'       => 'Subject',

@@ -1,8 +1,8 @@
-n<?php
+<?php
 /**
  * Plugin Name: WooCommerce Custom Conditional Order Email
  * Plugin URI: https://esmondmccain.com
- * Description: Plugin for adding a custom WooCommerce email that sends admins an email when an order is received with certain shipping categories
+ * Description: Plugin for adding a custom WooCommerce email that sends admins an email when an order is received with certain categories
  * Author: Esmond
  * Author URI: https://esmondmccain.com
  * Version: 0.1
@@ -21,15 +21,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @param array $email_classes available email classes
  * @return array filtered available email classes
  */
-function add_organic_product_order_woocommerce_email( $email_classes ) {
+function add_brix_waiver_woocommerce_email( $email_classes ) {
 
 	// include our custom email class
-	require_once( 'includes/class-wc-organic-product-order-email.php' );
+	require_once( 'includes/class-wc-brix-waiver-email.php' );
 
 	// add the email class to the list of email classes that WooCommerce loads
-	$email_classes['WC_Organic_Product_Email'] = new WC_Organic_Product_Email();
+	$email_classes['WC_Brix_Waiver_Email'] = new WC_Brix_Waiver_Email();
 
 	return $email_classes;
 
 }
-add_filter( 'woocommerce_email_classes', 'add_organic_product_order_woocommerce_email' );
+add_filter( 'woocommerce_email_classes', 'add_brix_waiver_woocommerce_email' );
