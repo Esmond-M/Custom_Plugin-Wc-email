@@ -28,7 +28,7 @@ class WC_Brix_Waiver_Email extends WC_Email {
 		$this->description = 'Waiver Customer Notification emails are sent when a customer places an order with category "training-programs"';
 
 		// these are the default heading and subject lines that can be overridden using the settings
-		$this->heading = 'Waiver for Online Coaching';
+		$this->heading = 'Mandatory Waiver';
 		$this->subject = 'Waiver for Online Coaching';
 
 		// these define the locations of the templates that this email should use, we'll just use the new order template since this email is similar
