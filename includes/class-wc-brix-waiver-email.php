@@ -36,9 +36,11 @@ class WC_Brix_Waiver_Email extends WC_Email {
 		$this->template_plain = 'emails/plain/brix-waiver-notification.php';
 
 		// Trigger on new paid orders
-		add_action( 'woocommerce_order_status_pending_to_processing_notification', array( $this, 'trigger' ) );
-		add_action( 'woocommerce_order_status_failed_to_processing_notification',  array( $this, 'trigger' ) );
-        add_action( 'woocommerce_order_status_completed_notification', array( $this, 'trigger' ) );
+  add_action( 'woocommerce_order_status_pending_to_processing_notification', array( $this, 'trigger' ), 10, 2 );
+  add_action( 'woocommerce_order_status_pending_to_completed_notification', array( $this, 'trigger' ), 10, 2 );
+  add_action( 'woocommerce_order_status_failed_to_processing_notification', array( $this, 'trigger' ), 10, 2 );
+  add_action( 'woocommerce_order_status_failed_to_completed_notification', array( $this, 'trigger' ), 10, 2 );
+  
 
 		// Call parent constructor to load any other defaults not explicity defined here
 		parent::__construct();
@@ -62,23 +64,34 @@ class WC_Brix_Waiver_Email extends WC_Email {
         // setup order object
         $this->object = new WC_Order( $order_id );
         // set our flag to be false until we find a product in that category
+        
         $cat_check = false;
 
-// check each cart item for our category
-        foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+        // check each order item for our category
 
-            $product = $cart_item['data'];
-
-            // replace 'training-programs' with your category's slug
-            if ( has_term( 'training-programs', 'product_cat', $product->get_id() ) ) {
-                $cat_check = true;
-                // break because we only need one "true" to matter here
-                break;
-            }
+        // 1. Get order object
+ 
+        $order = wc_get_order( $order_id );
+         
+        // 2. Initialize $cat_in_order variable
+           
+         
+        // 3. Get order items and loop through them...
+        // ... if product in category, edit $cat_in_order
+           
+        $items = $order->get_items(); 
             
+        foreach ( $items as $item ) {      
+            $product_id = $item['product_id'];  
+            if ( has_term( 'training-programs', 'product_cat', $product_id ) ) {
+                 $cat_check = true;
+                 // break because we only need one "true" to matter here
+                 break;
+            }
         }
+   
 
-// if a product in the cart is in our category, do something
+        // if a product in the order is in our category, do something
         if ( ! $cat_check ) {
             return;
         }
@@ -98,10 +111,6 @@ class WC_Brix_Waiver_Email extends WC_Email {
         // woohoo, send the email!
         $this->send( $this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments() );
     }
-
-
-
-
 
 
 
