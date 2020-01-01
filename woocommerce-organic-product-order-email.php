@@ -1,4 +1,4 @@
-n<?php
+<?php
 /**
  * Plugin Name: WooCommerce Custom Conditional Order Email
  * Plugin URI: https://esmondmccain.com
